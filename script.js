@@ -1,5 +1,6 @@
 // Preload
 const faceapi = ml5.faceApi(modelLoaded);
+let reader = new FileReader();
 let img;
 let canvas, ctx;
 
@@ -23,10 +24,9 @@ function Classify(ev){
     return;
   }
 
-  var reader = new FileReader();
   reader.readAsDataURL(file);
 
-  reader.onloadend = function() {
+  reader.onloadend = function ()  {
 
     img = new Image();
     img.src = reader.result;
@@ -42,6 +42,7 @@ function Classify(ev){
     ctx = canvas.getContext('2d');
 
     faceapi.detectSingle(img, gotResults);
+
   }
 
 }
