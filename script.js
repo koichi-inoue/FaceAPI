@@ -16,10 +16,11 @@ function modelLoaded() {
   ctx.drawImage( img, 0, 0);
 
   canvas.addEventListener("dragover",function(ev){ ev.preventDefault();}, false);
-  canvas.addEventListener("drop", function(ev){ ev.preventDefault(); Classify(ev);}, false);
+  canvas.addEventListener("drop", function(ev){ ev.preventDefault(); GetImage(ev);}, false);
 }
 
-function Classify(ev){
+// GetImage
+function GetImage(ev){
 
   var file = ev.dataTransfer.files[0];
 
@@ -34,19 +35,14 @@ function Classify(ev){
   reader.onloadend = function ()  {
 
     img.src = reader.result;
-
     img.onload = function(){
-
       console.log(img.naturalWidth, img.naturalHeight);
       canvas.width  = img.naturalWidth;
       canvas.height = img.naturalHeight;
       ctx.drawImage(img, 0,0, img.naturalWidth, img.naturalHeight);
-
       faceapi.detectSingle(img, gotResults);
     }
-
   }
-
 }
 
 function gotResults(err, result) {
