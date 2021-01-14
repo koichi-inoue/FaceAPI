@@ -1,17 +1,22 @@
 // Preload
 const faceapi = ml5.faceApi(modelLoaded);
 let reader = new FileReader();
-let img;
+let img = new Image();
+    img.src = 'DropHere.png';
 let canvas, ctx;
 
 // modelLoaded > Ready to Accept
 function modelLoaded() {
   document.getElementById('message').innerHTML = '<p>FaceApi model loaded!</p>';
 
-  obj = document.getElementById("DropHere");
-  obj.src = 'DropHere.png';
-  obj.addEventListener("dragover",function(ev){ ev.preventDefault();}, false);
-  obj.addEventListener("drop", function(ev){ ev.preventDefault(); Classify(ev);}, false);
+  canvas = document.getElementById("canvas");
+  canvas.width  = 640;
+  canvas.height = 480;
+  ctx = canvas.getContext('2d');
+  ctx.drawImage( img, 0, 0);
+
+  canvas.addEventListener("dragover",function(ev){ ev.preventDefault();}, false);
+  canvas.addEventListener("drop", function(ev){ ev.preventDefault(); Classify(ev);}, false);
 }
 
 function Classify(ev){
@@ -28,20 +33,17 @@ function Classify(ev){
 
   reader.onloadend = function ()  {
 
-    img = new Image();
     img.src = reader.result;
 
-    console.log(img.naturalWidth, img.naturalHeight);
+    img.onload = function(){
 
-    canvas = document.createElement("canvas");
-    canvas.width  = img.naturalWidth;
-    canvas.height = img.naturalHeight;
+      console.log(img.naturalWidth, img.naturalHeight);
+      canvas.width  = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.drawImage(img, 0,0, img.naturalWidth, img.naturalHeight);
 
-    document.getElementById("DropHere").remove();
-    document.getElementById("image").appendChild(canvas);
-    ctx = canvas.getContext('2d');
-
-    faceapi.detectSingle(img, gotResults);
+      faceapi.detectSingle(img, gotResults);
+    }
 
   }
 
@@ -50,12 +52,12 @@ function Classify(ev){
 function gotResults(err, result) {
     if (err) {
         console.log(err)
+        alert('Detection Error：Cannot read property.');
         return
     }
 
     if (result) {
         console.log(result)
-        ctx.drawImage(img, 0,0, img.naturalWidth, img.naturalHeight);
         drawBox(result)
         drawLandmarks(result)
     }
