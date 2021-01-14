@@ -31,6 +31,8 @@ function Classify(ev){
     img = new Image();
     img.src = reader.result;
 
+    console.log(img.naturalWidth, img.naturalHeight);
+
     canvas = document.createElement("canvas");
     canvas.width  = img.naturalWidth;
     canvas.height = img.naturalHeight;
