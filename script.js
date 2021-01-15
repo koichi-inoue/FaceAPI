@@ -85,21 +85,21 @@ function drawLandmarks(result){
 
 function drawPart(feature, closed){
 
-    ctx.beginPath();
-    for(let i = 0; i < feature.length; i++){
-        const x = feature[i]._x;
-        const y = feature[i]._y;
+  ctx.beginPath();
+  for(let i = 0; i < feature.length; i++){
+      const x = feature[i]._x;
+      const y = feature[i]._y;
 
-        if(i === 0){
-            ctx.moveTo(x, y);
-        } else {
-            ctx.lineTo(x, y);
-        }
-    }
+      if(i === 0){
+          ctx.moveTo(x, y);
+      } else {
+          ctx.lineTo(x, y);
+      }
+  }
 
-    if(closed === true){
-        ctx.closePath();
-    }
-    ctx.stroke();
+  if(closed === true){
+      ctx.closePath();
+  }
+  ctx.stroke();
 
 }
