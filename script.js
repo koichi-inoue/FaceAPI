@@ -7,7 +7,7 @@ let canvas, ctx;
 
 // modelLoaded > Ready to Accept
 function modelLoaded() {
-  document.getElementById('message').innerHTML = '<p>FaceApi model loaded!</p>';
+  document.getElementById('message').innerHTML = '<p>FaceApi loaded!</p>';
 
   canvas = document.getElementById("canvas");
   canvas.width  = 640;
@@ -34,6 +34,8 @@ function GetImage(ev){
 
   reader.onloadend = function ()  {
 
+    document.getElementById('message').innerHTML = '<p>Now Preparing! </p>';
+
     img.src = reader.result;
     img.onload = function(){
       console.log(img.naturalWidth, img.naturalHeight);
@@ -46,98 +48,58 @@ function GetImage(ev){
 }
 
 function gotResults(err, result) {
-    if (err) {
-        console.log(err)
-        alert('Detection Error：Cannot read property.');
-        return
-    }
 
-    if (result) {
-        console.log(result)
-        drawBox(result)
-        drawLandmarks(result)
-    }
+  document.getElementById('message').innerHTML = '<p>Detected!</p>';
+
+  if (err) {
+      console.log(err);
+      alert('Detection Error：Cannot read property.');
+      return;
+  }
+
+  if (result) {
+    console.log(result);
+    drawBox(result);
+    drawLandmarks(result);
+  }
 }
 
 function drawBox(result){
-    const alignedRect = result.alignedRect;
-    const {_x, _y, _width, _height} = alignedRect._box;
-    ctx.rect(_x, _y, _width, _height);
-    ctx.strokeStyle = "#ffffff";
-    ctx.stroke();
+  const alignedRect = result.alignedRect;
+  const {_x, _y, _width, _height} = alignedRect._box;
+  ctx.rect(_x, _y, _width, _height);
+  ctx.strokeStyle = "#ffffff";
+  ctx.stroke();
 }
 
+
 function drawLandmarks(result){
+  ctx.strokeStyle = "#a15ffb";
+  drawPart(result.parts.mouth, true);
+  drawPart(result.parts.nose, false);
+  drawPart(result.parts.leftEye, true);
+  drawPart(result.parts.leftEyeBrow, false);
+  drawPart(result.parts.rightEye, true);
+  drawPart(result.parts.rightEyeBrow, false);
+}
 
-    ctx.strokeStyle = "#a15ffb";
+function drawPart(feature, closed){
 
-    // mouth
     ctx.beginPath();
-    result.parts.mouth.forEach( (item, idx) => {
-        if(idx = 0){
-            ctx.moveTo(item._x, item._y);
-        } else {
-            ctx.lineTo(item._x, item._y);
-        }
-    })
-    ctx.closePath();
-    ctx.stroke();
+    for(let i = 0; i < feature.length; i++){
+        const x = feature[i]._x;
+        const y = feature[i]._y;
 
-    // nose
-    ctx.beginPath();
-    result.parts.nose.forEach( (item, idx) => {
-        if(idx = 0){
-            ctx.moveTo(item._x, item._y);
+        if(i === 0){
+            ctx.moveTo(x, y);
         } else {
-            ctx.lineTo(item._x, item._y);
+            ctx.lineTo(x, y);
         }
-    })
-    ctx.stroke();
+    }
 
-    // left eye
-    ctx.beginPath();
-    result.parts.leftEye.forEach( (item, idx) => {
-        if(idx = 0){
-            ctx.moveTo(item._x, item._y);
-        } else {
-            ctx.lineTo(item._x, item._y);
-        }
-    })
-    ctx.closePath();
-    ctx.stroke();
-
-    // right eye
-    ctx.beginPath();
-    result.parts.rightEye.forEach( (item, idx) => {
-        if(idx = 0){
-            ctx.moveTo(item._x, item._y);
-        } else {
-            ctx.lineTo(item._x, item._y);
-        }
-    })
-    ctx.closePath();
-    ctx.stroke();
-
-    // right eyebrow
-    ctx.beginPath();
-    result.parts.rightEyeBrow.forEach( (item, idx) => {
-        if(idx = 0){
-            ctx.moveTo(item._x, item._y);
-        } else {
-            ctx.lineTo(item._x, item._y);
-        }
-    })
-    ctx.stroke();
-
-    // left eyeBrow
-    ctx.beginPath();
-    result.parts.leftEyeBrow.forEach( (item, idx) => {
-        if(idx = 0){
-            ctx.moveTo(item._x, item._y);
-        } else {
-            ctx.lineTo(item._x, item._y);
-        }
-    })
+    if(closed === true){
+        ctx.closePath();
+    }
     ctx.stroke();
 
 }
